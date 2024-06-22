@@ -1,0 +1,63 @@
+package com.conversor-moneda;
+
+import java.time.LocalDateTime;
+
+public class Moneda {
+    public String divisaOrigen;
+    private String divisaFinal;
+    private Double cantidadOrigen;
+    private Double cantidadFinal;
+    private LocalDateTime tiempo;
+
+    public Moneda(String divisaOrigen, String divisaFinal, Double cantidadOrigen,
+                  Double cantidadFinal, LocalDateTime tiempo) {
+        this.divisaOrigen = divisaOrigen;
+        this.divisaFinal = divisaFinal;
+        this.cantidadOrigen = cantidadOrigen;
+        this.cantidadFinal = cantidadFinal;
+        this.tiempo = tiempo;
+    }
+
+    public Moneda() {
+    }
+
+    public String getDivisaOrigen() {
+        return divisaOrigen;
+    }
+
+    public void setDivisaOrigen(String divisaOrigen) {
+        this.divisaOrigen = divisaOrigen;
+    }
+
+    public String getDivisaFinal() {
+        return divisaFinal;
+    }
+
+    public void setDivisaFinal(String divisaFinal) {
+        this.divisaFinal = divisaFinal;
+    }
+
+    public Double getCantidadOrigen() {
+        return cantidadOrigen;
+    }
+
+    public void setCantidadOrigen(Double cantidadOrigen) {
+        this.cantidadOrigen = cantidadOrigen;
+    }
+
+    public Double getCantidadFinal() {
+        return cantidadFinal;
+    }
+
+    public void setCantidadFinal(Double cantidadFinal) {
+        this.cantidadFinal = cantidadFinal;
+    }
+
+    public LocalDateTime getTiempo() {
+        return tiempo;
+    }
+
+    public void setTiempo(LocalDateTime tiempo) {
+        this.tiempo = tiempo;
+    }
+}
