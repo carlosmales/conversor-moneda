@@ -1,0 +1,143 @@
+package com.conversor-moneda.principal;
+import com.conversorMoneda.Moneda;
+import com.google.gson.*;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static com.google.gson.FieldNamingPolicy.UPPER_CAMEL_CASE;
+
+public class Conversor {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String divisaOrigen = new Moneda().getDivisaOrigen();
+        String divisaFinal = new Moneda().getDivisaFinal();
+        Double cantidadOrigen;
+        Double cantidadFinal;
+        LocalDateTime tiempo = new Moneda().getTiempo();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(UPPER_CAMEL_CASE)
+                .setPrettyPrinting()
+                .create();
+
+        String saludo = "¡BIENVENIDO AL CONVERSOR DE MONEDA ALURA";
+        String menuConversor = """
+                Escribe el número de la acción que deseas realizar
+                ahora:
+                1. Conversión de moneda
+                2. Finalizar aquí
+                """;
+        String menuMonedas = """
+                1. COP Peso Colombiano
+                2. USD Dolar Estadounidense
+                3. EUR Euro
+                4. ARS Peso Argentino
+                5. BRL Real Brasileño
+                """;
+        String menuCambios = """
+                1. COP ---> USD
+                2. USD ---> COP
+                3. USD ---> EUR
+                4. EUR ---> USD
+                5. EUR ---> COP
+                6. COP ---> EUR
+                """;
+
+        boolean continuar = true;
+        System.out.println(saludo);
+        System.out.println(menuConversor);
+        int accion = scanner.nextInt();
+        while (continuar) {
+
+
+            if (accion == 2) {
+                break;
+            }
+
+            System.out.println(menuMonedas);
+            System.out.println("Selecciona el tipo de cambio que harás");
+            System.out.println(menuCambios);
+            int tasaSeleccionada = scanner.nextInt();
+
+            switch (tasaSeleccionada) {
+                case 1:
+                    divisaOrigen = "COP";
+                    divisaFinal = "USD";
+                    break;
+                case 2:
+                    divisaOrigen = "USD";
+                    divisaFinal = "COP";
+                    break;
+                case 3:
+                    divisaOrigen = "USD";
+                    divisaFinal = "EUR";
+                    break;
+                case 4:
+                    divisaOrigen = "EUR";
+                    divisaFinal = "USD";
+                    break;
+                case 5:
+                    divisaOrigen = "EUR";
+                    divisaFinal = "COP";
+                    break;
+                case 6:
+                    divisaOrigen = "COP";
+                    divisaFinal = "EUR";
+                    break;
+            }
+            String divOrigen = divisaOrigen;
+            String divFinal = divisaFinal;
+            String direccion = "https://v6.exchangerate-api.com/v6/67dd8f97b013063a28fdd966/latest/" + divOrigen;
+
+            System.out.println("Cuanto dinero desear convertir de " + divisaOrigen + " a " + divisaFinal);
+            double cantidad = scanner.nextDouble();
+
+            try {
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(direccion))
+                        .build();
+                HttpResponse<String> response = client
+                        .send(request, HttpResponse.BodyHandlers.ofString());
+
+                JsonObject formato = new Gson().fromJson(response.body(), JsonObject.class);
+                JsonObject factorCambio = formato.getAsJsonObject("conversion_rates");
+
+                cantidadOrigen = cantidad;
+                double tasa = factorCambio.get(divFinal).getAsDouble();
+                cantidadFinal = tasa * cantidad;
+                System.out.println(cantidadOrigen + " " + divOrigen + " es igual a " +
+                        cantidadFinal + " " + divFinal);
+//                System.out.println("tiempo " + tiempo);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Ocurrió un error: ");
+                System.out.println(e.getMessage());
+            } catch (IllegalArgumentException | IOException | InterruptedException e) {
+                System.out.println("Error URI, verifique la dirección");
+            }
+            String divisor = """
+                 
+                 ____________________________________________________
+                 
+                 """;
+            System.out.println(divisor);
+            System.out.println(menuConversor);
+            int respuesta = scanner.nextInt();
+            if (respuesta == 1){
+                continuar = true;
+            } else{
+                continuar = false;
+            }
+        }
+        System.out.println("Gracias por usar nuestro conversor de moneda.");
+        scanner.close();
+    }
+}
